@@ -11,6 +11,10 @@ from django.conf import settings
 # as `AUTH_USER_MODEL`
 USER_MODEL = getattr(settings, 'AUTH_USER_MODEL', User)
 
+def expiry():
+    from django.utils import timezone
+    from datetime import timedelta
+    return timezone.now() + timedelta(days=60)
 
 class PasswordExpiry(models.Model):
     """
@@ -25,7 +29,8 @@ class PasswordExpiry(models.Model):
     user = models.ForeignKey(USER_MODEL, unique=True)
 
     password_expiry_date = models.DateTimeField(
-        auto_now_add=True,
+        default=expiry,
+        #auto_now_add=True,
         null=True,
         help_text="The date and time when the user's password expires. If "
                   "this is empty, the password never expires.",
